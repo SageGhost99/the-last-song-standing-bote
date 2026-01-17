@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taylor Swift Song Bracket</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #1f0f14 0%, #251531 50%, #894b8b 100%);
+            min-height: 100vh;
+            color: #2d3748;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .background-circles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-30px) translateX(20px); }
+        }
+
+        .glitter {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            animation: twinkle 3s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 0.8; transform: scale(1.2); }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            position: absolute;
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .hamburger-menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-menu:hover {
+            background: rgba(0, 0, 0, 0.95);
+        }
+
+        .hamburger-icon {
+            width: 30px;
+            height: 3px;
+            background: white;
+            margin: 6px 0;
+            transition: 0.3s;
+            border-radius: 3px;
+        }
+
+        .menu-dropdown {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.95);
+            border-radius: 12px;
+            padding: 10px 0;
+            min-width: 200px;
+            display: none;
+            z-index: 999;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .menu-dropdown.active {
+            display: block;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-size: 1em;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-overlay.hidden {
+            display: none;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #894b8b;
+            font-weight: 300;
+        }
+
+        .modal ul {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .modal li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .modal li::before {
+            content: "🎵";
+            position: absolute;
+            left: 0;
+        }
+
+        .modal-button {
+            background: black;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-weight: 500;
+            margin-top: 20px;
+            margin-right: 10px;
+        }
+
+        .modal-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-button.secondary {
+            background: #894b8b;
+        }
+
+        .round-announce {
+            font-size: 3em;
+            font-weight: 300;
+            color: #894b8b;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .winner-journey {
+            margin-top: 30px;
+        }
+
+        .journey-round {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+
+        .journey-round strong {
+            color: #894b8b;
+        }
+
+        .album-key {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-auto-flow: column;
+            grid-template-rows: repeat(6, auto);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .album-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .album-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .album-name {
+            font-size: 0.95em;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container.finals {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, #1f0f14 0%, #251531 50%, #894b8b 100%);
+            padding: 20px 0;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: 300;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.2);
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px auto;
+            overflow: hidden;
+            max-width: 600px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        .round-container {
+            display: none;
+        }
+
+        .round-container.active {
+            display: block;
+        }
+
+        .round-label {
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.5em;
+            color: white;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .matchup-count {
+            text-align: center;
+            font-size: 1em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        .round-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1f0f14 0%, #251531 50%, #894b8b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .round-transition.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .transition-text {
+            font-size: 3em;
+            color: white;
+            font-weight: 300;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+            animation: pulse 1s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .matchup {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 10px;
+            margin: 15px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .song {
+            padding: 20px 24px;
+            margin: 6px 0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            border: 3px solid;
+        }
+
+        .song[data-album="debut"] { border-color: #3B5d32; }
+        .song[data-album="fearless"] { border-color: #E8C547; }
+        .song[data-album="speak-now"] { border-color: #94417B; }
+        .song[data-album="red"] { border-color: #921d16; }
+        .song[data-album="1989"] { border-color: #7CB4E8; }
+        .song[data-album="reputation"] { border-color: #181818; }
+        .song[data-album="lover"] { border-color: #f1c0db; }
+        .song[data-album="folklore"] { border-color: #979797; }
+        .song[data-album="evermore"] { border-color: #55291e; }
+        .song[data-album="midnights"] { border-color: #4b5a86; }
+        .song[data-album="ttpd"] { border-color: #c7c289; }
+        .song[data-album="showgirl"] { border-color: #e46c32; }
+
+        .song[data-album="debut"]:hover { background: #3B5d32; color: white; }
+        .song[data-album="fearless"]:hover { background: #E8C547; color: #2d3748; }
+        .song[data-album="speak-now"]:hover { background: #94417B; color: white; }
+        .song[data-album="red"]:hover { background: #921d16; color: white; }
+        .song[data-album="1989"]:hover { background: #7CB4E8; color: white; }
+        .song[data-album="reputation"]:hover { background: #181818; color: white; }
+        .song[data-album="lover"]:hover { background: #f1c0db; color: #2d3748; }
+        .song[data-album="folklore"]:hover { background: #979797; color: white; }
+        .song[data-album="evermore"]:hover { background: #55291e; color: white; }
+        .song[data-album="midnights"]:hover { background: #4b5a86; color: white; }
+        .song[data-album="ttpd"]:hover { background: #c7c289; color: #2d3748; }
+        .song[data-album="showgirl"]:hover { background: #e46c32; color: white; }
+
+        .song:hover {
+            transform: scale(1.03);
+        }
+
+        .song.selected[data-album="debut"] { background: #3B5d32; color: white; }
+        .song.selected[data-album="fearless"] { background: #E8C547; color: #2d3748; }
+        .song.selected[data-album="speak-now"] { background: #94417B; color: white; }
+        .song.selected[data-album="red"] { background: #921d16; color: white; }
+        .song.selected[data-album="1989"] { background: #7CB4E8; color: white; }
+        .song.selected[data-album="reputation"] { background: #181818; color: white; }
+        .song.selected[data-album="lover"] { background: #f1c0db; color: #2d3748; }
+        .song.selected[data-album="folklore"] { background: #979797; color: white; }
+        .song.selected[data-album="evermore"] { background: #55291e; color: white; }
+        .song.selected[data-album="midnights"] { background: #4b5a86; color: white; }
+        .song.selected[data-album="ttpd"] { background: #c7c289; color: #2d3748; }
+        .song.selected[data-album="showgirl"] { background: #e46c32; color: white; }
+
+        .song.selected {
+            font-weight: 600;
+            border-width: 4px;
+        }
+
+        .song.empty {
+            background: rgba(255, 255, 255, 0.6);
+            color: #a0aec0;
+            font-style: italic;
+            cursor: default;
+            text-align: center;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .song.empty:hover {
+            background: rgba(255, 255, 255, 0.6);
+            color: #a0aec0;
+            transform: none;
+        }
+
+        .lock-button {
+            background: black;
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            font-size: 1.2em;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-weight: 500;
+            margin: 40px auto;
+            display: block;
+        }
+
+        .lock-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .lock-button:not(:disabled):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+        }
+
+        .finals-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .finals-screen.active {
+            display: block;
+        }
+
+        .finals-title {
+            font-size: 2.5em;
+            color: white;
+            font-weight: 300;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+            line-height: 1.3;
+        }
+
+        .finals-matchup {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 30px auto;
+            max-width: 600px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+
+        .vs-text {
+            font-size: 2em;
+            font-weight: 600;
+            color: #894b8b;
+            margin: 20px 0;
+        }
+
+        .bracket-review {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1f0f14 0%, #251531 50%, #894b8b 100%);
+            overflow: auto;
+            z-index: 2500;
+        }
+
+        .bracket-review.active {
+            display: block;
+        }
+
+        .bracket-review-wrapper {
+            overflow-x: auto;
+            overflow-y: auto;
+            height: calc(100vh - 150px);
+            width: 100%;
+        }
+
+        .bracket-review .bracket {
+            display: flex;
+            justify-content: flex-start;
+            min-width: 1600px;
+            width: max-content;
+            gap: 50px;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .bracket-review .round {
+            display: flex !important;
+            flex-direction: column;
+            justify-content: space-around;
+            flex: 1;
+        }
+
+        .bracket-review .matchup {
+            pointer-events: none;
+            opacity: 0.9;
+            margin: 8px 0;
+        }
+
+        .bracket-review .song {
+            cursor: default;
+            font-size: 0.9em;
+            padding: 12px 16px;
+        }
+
+        .bracket-review .champion-container {
+            display: flex !important;
+            flex-direction: column;
+            align-items: center;
+            min-width: 220px;
+        }
+        
+        .bracket-review .champion {
+            display: flex !important;
+            padding: 20px 24px !important;
+            background: white !important;
+            border-radius: 8px !important;
+            font-size: 1.1em !important;
+            border: 4px solid !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+        }
+        
+        .bracket-review .champion[data-album="debut"] { border-color: #3B5d32 !important; background: #3B5d32 !important; color: white !important; }
+        .bracket-review .champion[data-album="fearless"] { border-color: #E8C547 !important; background: #E8C547 !important; color: #2d3748 !important; }
+        .bracket-review .champion[data-album="speak-now"] { border-color: #94417B !important; background: #94417B !important; color: white !important; }
+        .bracket-review .champion[data-album="red"] { border-color: #921d16 !important; background: #921d16 !important; color: white !important; }
+        .bracket-review .champion[data-album="1989"] { border-color: #7CB4E8 !important; background: #7CB4E8 !important; color: white !important; }
+        .bracket-review .champion[data-album="reputation"] { border-color: #181818 !important; background: #181818 !important; color: white !important; }
+        .bracket-review .champion[data-album="lover"] { border-color: #f1c0db !important; background: #f1c0db !important; color: #2d3748 !important; }
+        .bracket-review .champion[data-album="folklore"] { border-color: #979797 !important; background: #979797 !important; color: white !important; }
+        .bracket-review .champion[data-album="evermore"] { border-color: #55291e !important; background: #55291e !important; color: white !important; }
+        .bracket-review .champion[data-album="midnights"] { border-color: #4b5a86 !important; background: #4b5a86 !important; color: white !important; }
+        .bracket-review .champion[data-album="ttpd"] { border-color: #c7c289 !important; background: #c7c289 !important; color: #2d3748 !important; }
+        .bracket-review .champion[data-album="showgirl"] { border-color: #e46c32 !important; background: #e46c32 !important; color: white !important; }
+
+        .bracket-review-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .bracket-review-header h2 {
+            font-size: 2.5em;
+            font-weight: 300;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .winner-modal-content {
+            text-align: center;
+        }
+
+        .winner-modal-content .round-announce {
+            margin: 20px 0;
+        }
+
+        button {
+            background: black;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-weight: 500;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .album-key {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-circles"></div>
+    
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu" onclick="toggleMenu()">
+        <div class="hamburger-icon"></div>
+        <div class="hamburger-icon"></div>
+        <div class="hamburger-icon"></div>
+    </div>
+
+    <div class="menu-dropdown" id="menuDropdown">
+        <div class="menu-item" onclick="showInstructions()">Instructions</div>
+        <div class="menu-item" onclick="showAlbumKey()">Album Key</div>
+    </div>
+
+    <!-- Instructions Modal -->
+    <div class="modal-overlay" id="instructionsModal">
+        <div class="modal">
+            <h2>How to Play</h2>
+            <ul>
+                <li><strong>What it is:</strong> A tournament-style bracket where Taylor Swift songs face off to find your ultimate favorite!</li>
+                <li><strong>Song count:</strong> 64 songs are randomly selected from all 229 songs across 12 albums.</li>
+                <li><strong>How to choose:</strong> Click your preferred song in each matchup. Winners automatically advance to the next round.</li>
+                <li><strong>How long:</strong> Takes about 10-15 minutes to complete all 63 matchups and crown your champion!</li>
+                <li><strong>Play again:</strong> Click "Start New Bracket" to shuffle and discover a new winner with different songs!</li>
+            </ul>
+            <button class="modal-button" onclick="closeInstructions()">Got It!</button>
+        </div>
+    </div>
+
+    <!-- Album Key Modal -->
+    <div class="modal-overlay hidden" id="albumKeyModal">
+        <div class="modal">
+            <h2>Album Color Key</h2>
+            <div class="album-key">
+                <div class="album-item">
+                    <div class="album-color" style="background: #3B5d32;"></div>
+                    <div class="album-name">Taylor Swift Debut</div>
+                </div>
+                <div class="album-item">
+                    <div class="album-color" style="background: #E8C547;"></div>
+                    <div class="album-name">Fearless</div>
+                </div>
+                <div class="album-item">
+                    <div class="album-color" style="background: #94417B;"></div>
+                    <div class="album-name">Speak Now</div>
+                </div>
+                <div class="album-item">
+                    <div class="album-color" style="background: #921d16;"></div>
+                    <div class="album-name">Red</div>
+                </div>
+                <div class="album-item">
+                    <div class="album-color" style="background: #7CB4E8;"></div>
+                    <div class="album-name">1989</div>
+                </div>
+                <div class="album-item">
+                    <div class="album-color" style="background: #181818;"></div>
+                    <div class="album-name">Reputation</div>
+                </div>
+                <div class="album-item">
+                    <div class="album-color" style="background: #f1c0db;"></div>
+                    <div class="album-name">Lover</div>
+                </div>
+                <div class="album-item">
+                    <div class="album-color" style="background: #979797;"></div>
+                    <div class="album-name">Folklore</div>
+                </div>
+                <div class="album-item">
+                    <div class="album-color" style="background: #55291e;"></div>
+                    <div class="album-name">Evermore</div>
+                </div>
+                <div class="album-item">
+                    <div class="album-color" style="background: #4b5a86;"></div>
+                    <div class="album-name">Midnights</div>
+                </div>
+                <div class="album-item">
+                    <div class="album-color" style="background: #c7c289;"></div>
+                    <div class="album-name">The Tortured Poets Department</div>
+                </div>
+                <div class="album-item">
+                    <div class="album-color" style="background: #e46c32;"></div>
+                    <div class="album-name">The life of a showgirl</div>
+                </div>
+            </div>
+            <button class="modal-button" onclick="closeAlbumKey()">Close</button>
+        </div>
+    </div>
+
+    <!-- Winner Modal -->
+    <div class="modal-overlay hidden" id="winnerModal">
+        <div class="modal">
+            <div class="winner-modal-content">
+                <h2>The Last Song Standing:</h2>
+                <div class="round-announce" id="winnerName"></div>
+                <div class="winner-journey" id="winnerJourney"></div>
+                <div style="margin-top: 30px;">
+                    <button class="modal-button secondary" onclick="closeWinnerModal()">Play Again</button>
+                    <button class="modal-button" onclick="showBracketReview()">Review Choices</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Round Transition Animation -->
+    <div class="round-transition" id="roundTransition">
+        <div class="transition-text" id="transitionText">Round Complete!</div>
+    </div>
+
+    <div class="container" id="container">
+        <header>
+            <h1>🎵 The Last Song Standing 🎵</h1>
+            <p class="subtitle">Battle of the Eras</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </header>
+
+        <div id="roundsContainer"></div>
+
+        <div class="finals-screen" id="finalsScreen">
+            <div class="finals-title">And the Last Song<br>Standing is......</div>
+            <div class="finals-matchup">
+                <div class="song" id="finalist1">TBD</div>
+                <div class="vs-text">VS</div>
+                <div class="song" id="finalist2">TBD</div>
+            </div>
+            <button class="lock-button" id="finalsButton" disabled onclick="crownChampion()">Select Your Champion</button>
+        </div>
+
+        <div class="bracket-review" id="bracketReview">
+            <div class="bracket-review-header">
+                <h2>Your Bracket Journey</h2>
+                <button onclick="hideBracketReview()">Back</button>
+            </div>
+            <div class="bracket-review-wrapper">
+                <div class="bracket" id="reviewBracket"></div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <button onclick="startNewBracket()">Start New Bracket</button>
+        </div>
+    </div>
+
+    <script>
+        const allSongs = {
+            "debut": ["Tim McGraw", "Picture To Burn", "Teardrops On My Guitar", "A Place In This World", "Cold As You", "The Outside", "Tied Together With A Smile", "Stay Beautiful", "Should've Said No", "Mary's Song (Oh My My My)", "Our Song"],
+            "fearless": ["Fearless", "Fifteen", "Love Story", "Hey Stephen", "White Horse", "You Belong With Me", "Breathe", "Tell Me Why", "You're Not Sorry", "The Way I Loved You", "Forever & Always", "The Best Day", "Change", "Jump Then Fall", "Untouchable", "Come In With The Rain", "Superstar", "The Other Side Of The Door", "Today Was A Fairytale", "You All Over Me", "Mr. Perfectly Fine", "We Were Happy", "That's When", "Don't You", "Bye Bye Baby"],
+            "speak-now": ["Mine", "Sparks Fly", "Back to December", "Speak Now", "Dear John", "Mean", "The Story of Us", "Never Grow Up", "Enchanted", "Better Than Revenge", "Innocent", "Haunted", "Last Kiss", "Long Live", "Ours", "Superman", "Electric Touch", "When Emma Falls in Love", "I Can See You", "Castles Crumbling", "Foolish One", "Timeless"],
+            "red": ["State Of Grace", "Red", "Treacherous", "I Knew You Were Trouble", "All Too Well", "22", "I Almost Do", "We Are Never Ever Getting Back Together", "Stay Stay Stay", "The Last Time", "Holy Ground", "Sad Beautiful Tragic", "The Lucky One", "Everything Has Changed", "Starlight", "Begin Again", "The Moment I Knew", "Come Back… Be Here", "Girl At Home", "Ronan", "Better Man", "Nothing New", "Babe", "Message In A Bottle", "I Bet You Think About Me", "Forever Winter", "Run", "The Very First Night", "All Too Well - 10 Minute Version"],
+            "1989": ["Welcome To New York", "Blank Space", "Style", "Out Of The Woods", "All You Had To Do Was Stay", "Shake It Off", "I Wish You Would", "Bad Blood", "Wildest Dreams", "How You Get The Girl", "This Love", "I Know Places", "Clean", "Wonderland", "You Are In Love", "New Romantics"],
+            "reputation": ["…Ready For It?", "End Game", "I Did Something Bad", "Don't Blame Me", "Delicate", "Look What You Made Me Do", "So It Goes…", "Gorgeous", "Getaway Car", "King Of My Heart", "Dancing With Our Hands Tied", "Dress", "This Is Why We Can't Have Nice Things", "Call It What You Want", "New Year's Day"],
+            "lover": ["I Forgot That You Existed", "Cruel Summer", "Lover", "The Man", "The Archer", "I Think He Knows", "Miss Americana & The Heartbreak Prince", "Paper Rings", "Cornelia Street", "Death By A Thousand Cuts", "London Boy", "Soon You'll Get Better", "False God", "You Need To Calm Down", "Afterglow", "Me!", "It's Nice To Have A Friend", "Daylight"],
+            "folklore": ["The 1", "Cardigan", "The Last Great American Dynasty", "Exile", "My Tears Ricochet", "Mirrorball", "Seven", "August", "This Is Me Trying", "Illicit Affairs", "Invisible String", "Mad Woman", "Epiphany", "Betty", "Peace", "Hoax", "The Lakes"],
+            "evermore": ["Willow", "Champagne Problems", "Gold Rush", "Tis The Damn Season", "Tolerate It", "No Body, No Crime", "Happiness", "Dorothea", "Coney Island", "Ivy", "Cowboy Like Me", "Long Story Short", "Marjorie", "Closure", "Evermore", "Right Where You Left Me", "It's Time To Go"],
+            "midnights": ["Lavender Haze", "Maroon", "Anti-Hero", "Snow on the Beach", "You're on Your Own, Kid", "Midnight Rain", "Question…?", "Vigilante Shit", "Bejeweled", "Labyrinth", "Karma", "Sweet Nothing", "Mastermind", "The Great War", "Bigger Than the Whole Sky", "Paris"],
+            "ttpd": ["Fortnight", "The Tortured Poets Department", "My Boy Only Breaks His Favorite Toys", "Down Bad", "So Long, London", "But Daddy I Love Him", "Fresh Out the Slammer", "Florida!!!", "Guilty as Sin?", "Who's Afraid of Little Old Me?", "I Can Fix Him (No Really I Can)", "Loml", "I Can Do It with a Broken Heart", "The Smallest Man Who Ever Lived", "The Alchemy", "Clara Bow", "The Black Dog", "Imgonnagetyouback", "The Albatross", "Chloe or Sam or Sophia or Marcus", "How Did It End?", "So High School", "I Hate It Here", "Thank You Aimee", "I Look in People's Windows", "The Prophecy", "Cassandra", "Peter", "The Bolter", "Robin", "The Manuscript"],
+            "showgirl": ["The Fate of Ophelia", "Elizabeth Taylor", "Opalite", "Father Figure", "Eldest Daughter", "Ruin the Friendship", "Actually Romantic", "Wish List", "Wood", "Cancelled!", "Honey", "The Life of a Showgirl"]
+        };
+
+        let songPool = [];
+        let usageCount = {};
+        let winnerJourney = {};
+        let currentRound = 0;
+        let totalSelections = 0;
+        let roundData = [];
+        let finalsData = { finalist1: null, finalist2: null, winner: null, winnerAlbum: null };
+
+        function toggleMenu() {
+            const menu = document.getElementById('menuDropdown');
+            menu.classList.toggle('active');
+        }
+
+        function showInstructions() {
+            document.getElementById('instructionsModal').classList.remove('hidden');
+            toggleMenu();
+        }
+
+        function closeInstructions() {
+            document.getElementById('instructionsModal').classList.add('hidden');
+        }
+
+        function showAlbumKey() {
+            document.getElementById('albumKeyModal').classList.remove('hidden');
+            toggleMenu();
+        }
+
+        function closeAlbumKey() {
+            document.getElementById('albumKeyModal').classList.add('hidden');
+        }
+
+        function showWinnerModal(winner) {
+            createConfetti();
+            document.getElementById('winnerName').textContent = winner;
+            
+            const journey = winnerJourney[winner] || [];
+            let journeyHTML = '<div class="winner-journey"><h3>Victory Path:</h3>';
+            
+            const roundLabels = ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Semi-Finals', 'Finals'];
+            journey.forEach((defeated, idx) => {
+                if (defeated) {
+                    journeyHTML += `<div class="journey-round"><strong>${roundLabels[idx]}:</strong> Defeated "${defeated}"</div>`;
+                }
+            });
+            
+            journeyHTML += '</div>';
+            document.getElementById('winnerJourney').innerHTML = journeyHTML;
+            document.getElementById('winnerModal').classList.remove('hidden');
+        }
+
+        function closeWinnerModal() {
+            document.getElementById('winnerModal').classList.add('hidden');
+            clearConfetti();
+            startNewBracket();
+        }
+
+        function showBracketReview() {
+            document.getElementById('winnerModal').classList.add('hidden');
+            
+            const reviewBracket = document.getElementById('reviewBracket');
+            reviewBracket.innerHTML = '';
+            
+            const roundMatchups = [32, 16, 8, 4, 2];
+            const roundLabels = ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Semi-Finals'];
+            
+            // Show rounds 0-4 (Round 1 through Semi-Finals)
+            for (let r = 0; r < 5; r++) {
+                const round = document.createElement('div');
+                round.className = 'round';
+                
+                const label = document.createElement('div');
+                label.className = 'round-label';
+                label.textContent = roundLabels[r];
+                round.appendChild(label);
+                
+                const sourceRound = document.getElementById(`round${r}`);
+                if (sourceRound) {
+                    const matchups = sourceRound.querySelectorAll('.matchup');
+                    matchups.forEach(matchup => {
+                        const clonedMatchup = matchup.cloneNode(true);
+                        round.appendChild(clonedMatchup);
+                    });
+                }
+                
+                reviewBracket.appendChild(round);
+            }
+            
+            // Add Finals round
+            const finalsRound = document.createElement('div');
+            finalsRound.className = 'round';
+            
+            const finalsLabel = document.createElement('div');
+            finalsLabel.className = 'round-label';
+            finalsLabel.textContent = 'Finals';
+            finalsRound.appendChild(finalsLabel);
+            
+            const finalsMatchup = document.createElement('div');
+            finalsMatchup.className = 'matchup';
+            
+            if (finalsData.finalist1) {
+                const song1 = document.createElement('div');
+                song1.className = 'song';
+                song1.textContent = finalsData.finalist1.name;
+                if (finalsData.finalist1.album) {
+                    song1.setAttribute('data-album', finalsData.finalist1.album);
+                }
+                if (finalsData.winner === finalsData.finalist1.name) {
+                    song1.classList.add('selected');
+                }
+                finalsMatchup.appendChild(song1);
+            }
+            
+            if (finalsData.finalist2) {
+                const song2 = document.createElement('div');
+                song2.className = 'song';
+                song2.textContent = finalsData.finalist2.name;
+                if (finalsData.finalist2.album) {
+                    song2.setAttribute('data-album', finalsData.finalist2.album);
+                }
+                if (finalsData.winner === finalsData.finalist2.name) {
+                    song2.classList.add('selected');
+                }
+                finalsMatchup.appendChild(song2);
+            }
+            
+            finalsRound.appendChild(finalsMatchup);
+            reviewBracket.appendChild(finalsRound);
+            
+            // Add Champion
+            const championContainer = document.createElement('div');
+            championContainer.className = 'champion-container';
+            
+            const championLabel = document.createElement('div');
+            championLabel.className = 'round-label';
+            championLabel.textContent = '👑 Champion 👑';
+            championContainer.appendChild(championLabel);
+            
+            const champion = document.createElement('div');
+            champion.className = 'champion';
+            
+            // Get winner from finalsData or DOM
+            let winnerText = finalsData.winner;
+            let winnerAlbum = finalsData.winnerAlbum;
+            if (!winnerText) {
+                const winnerEl = document.getElementById('winnerName');
+                winnerText = winnerEl ? winnerEl.textContent : 'Champion';
+            }
+            
+            champion.textContent = winnerText;
+            if (winnerAlbum) {
+                champion.setAttribute('data-album', winnerAlbum);
+            }
+            championContainer.appendChild(champion);
+            
+            reviewBracket.appendChild(championContainer);
+            
+            document.getElementById('bracketReview').classList.add('active');
+        }
+
+        function hideBracketReview() {
+            document.getElementById('bracketReview').classList.remove('active');
+            document.getElementById('winnerModal').classList.remove('hidden');
+        }
+
+        function createConfetti() {
+            const colors = ['#ffd700', '#ff69b4', '#87ceeb', '#98fb98', '#dda0dd'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                document.body.appendChild(confetti);
+            }
+        }
+
+        function clearConfetti() {
+            document.querySelectorAll('.confetti').forEach(c => c.remove());
+        }
+
+        function createGlitter() {
+            const container = document.querySelector('.background-circles');
+            const sizes = [5, 8, 12, 15, 20];
+            
+            for (let i = 0; i < 30; i++) {
+                const glitter = document.createElement('div');
+                glitter.className = 'glitter';
+                const size = sizes[Math.floor(Math.random() * sizes.length)];
+                glitter.style.width = size + 'px';
+                glitter.style.height = size + 'px';
+                glitter.style.left = Math.random() * 100 + '%';
+                glitter.style.top = Math.random() * 100 + '%';
+                glitter.style.animationDelay = Math.random() * 3 + 's';
+                glitter.style.animationDuration = (2 + Math.random() * 2) + 's';
+                container.appendChild(glitter);
+            }
+        }
+
+        function updateProgress() {
+            const percentage = (totalSelections / 63) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+        }
+
+        function initializeSongPool() {
+            songPool = [];
+            for (let album in allSongs) {
+                allSongs[album].forEach(song => {
+                    songPool.push({ song, album });
+                    if (!usageCount[song]) usageCount[song] = 0;
+                });
+            }
+        }
+
+        function selectSongsForBracket() {
+            const selected = [];
+            const albumCounts = {
+                "debut": 3, "fearless": 7, "speak-now": 6, "red": 8,
+                "1989": 4, "reputation": 4, "lover": 5, "folklore": 5,
+                "evermore": 5, "midnights": 4, "ttpd": 10, "showgirl": 3
+            };
+
+            for (let album in albumCounts) {
+                const albumSongs = allSongs[album].map(song => ({ song, album }));
+                albumSongs.sort((a, b) => usageCount[a.song] - usageCount[b.song]);
+                
+                for (let i = 0; i < Math.min(albumCounts[album], albumSongs.length); i++) {
+                    selected.push(albumSongs[i]);
+                    usageCount[albumSongs[i].song]++;
+                }
+            }
+
+            for (let i = selected.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [selected[i], selected[j]] = [selected[j], selected[i]];
+            }
+            
+            return selected;
+        }
+
+        function createBracket() {
+            const container = document.getElementById('roundsContainer');
+            container.innerHTML = '';
+            
+            document.getElementById('finalsScreen').classList.remove('active');
+            document.querySelector('header').style.display = 'block';
+            
+            winnerJourney = {};
+            finalsData = { finalist1: null, finalist2: null, winner: null, winnerAlbum: null };
+            currentRound = 0;
+            totalSelections = 0;
+            roundData = [];
+            updateProgress();
+
+            const songs = selectSongsForBracket();
+            const roundMatchups = [32, 16, 8, 4, 2];
+            const roundLabels = ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Semi-Finals'];
+            
+            let songIndex = 0;
+            
+            for (let r = 0; r < 5; r++) {
+                const roundDiv = document.createElement('div');
+                roundDiv.className = 'round-container';
+                roundDiv.id = `round${r}`;
+                if (r === 0) roundDiv.classList.add('active');
+                
+                const label = document.createElement('div');
+                label.className = 'round-label';
+                label.textContent = roundLabels[r];
+                roundDiv.appendChild(label);
+                
+                const matchupCount = document.createElement('div');
+                matchupCount.className = 'matchup-count';
+                matchupCount.textContent = `${roundMatchups[r]} matchups`;
+                roundDiv.appendChild(matchupCount);
+                
+                roundData[r] = [];
+                
+                for (let m = 0; m < roundMatchups[r]; m++) {
+                    const matchup = document.createElement('div');
+                    matchup.className = 'matchup';
+                    matchup.dataset.round = r;
+                    matchup.dataset.match = m;
+                    
+                    if (r === 0) {
+                        const song1 = createSongElement(songs[songIndex].song, songs[songIndex].album);
+                        const song2 = createSongElement(songs[songIndex + 1].song, songs[songIndex + 1].album);
+                        matchup.appendChild(song1);
+                        matchup.appendChild(song2);
+                        songIndex += 2;
+                        
+                        roundData[r].push({ songs: [songs[songIndex - 2], songs[songIndex - 1]] });
+                    } else {
+                        matchup.appendChild(createSongElement('TBD', null, true));
+                        matchup.appendChild(createSongElement('TBD', null, true));
+                        roundData[r].push({ songs: [] });
+                    }
+                    
+                    roundDiv.appendChild(matchup);
+                }
+                
+                const lockBtn = document.createElement('button');
+                lockBtn.className = 'lock-button';
+                lockBtn.id = `lock${r}`;
+                lockBtn.textContent = `Lock in ${roundLabels[r]}`;
+                lockBtn.disabled = true;
+                lockBtn.onclick = () => lockRound(r);
+                roundDiv.appendChild(lockBtn);
+                
+                container.appendChild(roundDiv);
+            }
+
+            addClickListeners();
+        }
+
+        function createSongElement(name, album, isEmpty = false) {
+            const el = document.createElement('div');
+            el.className = 'song';
+            el.textContent = name;
+            
+            if (isEmpty || name === 'TBD') {
+                el.classList.add('empty');
+            } else if (album) {
+                el.dataset.album = album;
+            }
+            
+            return el;
+        }
+
+        function addClickListeners() {
+            document.querySelectorAll('.song').forEach(song => {
+                song.addEventListener('click', handleSongClick);
+            });
+        }
+
+        function handleSongClick(e) {
+            const song = e.target;
+            if (song.classList.contains('empty')) return;
+
+            const matchup = song.closest('.matchup');
+            if (!matchup) return;
+            
+            const round = parseInt(matchup.dataset.round);
+            const match = parseInt(matchup.dataset.match);
+
+            if (round !== currentRound) return;
+
+            const allSongs = matchup.querySelectorAll('.song');
+            const wasSelected = song.classList.contains('selected');
+            
+            allSongs.forEach(s => s.classList.remove('selected'));
+            
+            if (!wasSelected) {
+                song.classList.add('selected');
+                totalSelections++;
+                updateProgress();
+            } else {
+                totalSelections--;
+                updateProgress();
+            }
+            
+            checkRoundCompletion(round);
+        }
+
+        function checkRoundCompletion(round) {
+            const roundDiv = document.getElementById(`round${round}`);
+            const matchups = roundDiv.querySelectorAll('.matchup');
+            let completed = 0;
+            
+            matchups.forEach(m => {
+                const selected = m.querySelector('.song.selected');
+                if (selected) completed++;
+            });
+            
+            const lockBtn = document.getElementById(`lock${round}`);
+            lockBtn.disabled = (completed !== matchups.length);
+        }
+
+        function lockRound(round) {
+            const roundDiv = document.getElementById(`round${round}`);
+            if (!roundDiv) return;
+            
+            const matchups = roundDiv.querySelectorAll('.matchup');
+            
+            matchups.forEach((matchup, idx) => {
+                const selected = matchup.querySelector('.song.selected');
+                if (!selected) return;
+                
+                const loser = Array.from(matchup.querySelectorAll('.song')).find(s => s !== selected && !s.classList.contains('empty'));
+                
+                if (selected && loser) {
+                    const selectedText = selected.textContent || '';
+                    const loserText = loser.textContent || '';
+                    
+                    if (selectedText && loserText) {
+                        if (!winnerJourney[selectedText]) {
+                            winnerJourney[selectedText] = [];
+                        }
+                        winnerJourney[selectedText][round] = loserText;
+                    }
+                    
+                    const albumData = selected.getAttribute('data-album');
+                    advanceWinner(selectedText, albumData, round, idx);
+                }
+            });
+            
+            // Show transition animation
+            const transition = document.getElementById('roundTransition');
+            const transitionText = document.getElementById('transitionText');
+            
+            if (!transition || !transitionText) return;
+            
+            if (round < 4) {
+                transitionText.textContent = 'Round Complete!';
+            } else {
+                transitionText.textContent = 'Semi-Finals Complete!';
+            }
+            
+            transition.classList.add('active');
+            
+            setTimeout(() => {
+                transition.classList.remove('active');
+                roundDiv.classList.remove('active');
+                
+                if (round < 4) {
+                    currentRound++;
+                    const nextRound = document.getElementById(`round${currentRound}`);
+                    if (nextRound) {
+                        nextRound.classList.add('active');
+                    }
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    showFinalsScreen();
+                }
+            }, 1500);
+        }
+
+        function advanceWinner(songName, album, round, match) {
+            if (round >= 4) return;
+            
+            const nextRound = round + 1;
+            const nextMatch = Math.floor(match / 2);
+            const nextRoundDiv = document.getElementById(`round${nextRound}`);
+            
+            if (!nextRoundDiv) return;
+            
+            const nextMatchup = nextRoundDiv.querySelectorAll('.matchup')[nextMatch];
+            
+            if (nextMatchup) {
+                const songs = nextMatchup.querySelectorAll('.song');
+                const position = match % 2;
+                if (songs[position]) {
+                    songs[position].textContent = songName;
+                    songs[position].classList.remove('empty');
+                    if (album) {
+                        songs[position].setAttribute('data-album', album);
+                    }
+                }
+            }
+        }
+
+        function showFinalsScreen() {
+            const round4 = document.getElementById('round4');
+            if (!round4) return;
+            
+            const matchups = round4.querySelectorAll('.matchup');
+            const finalists = [];
+            
+            matchups.forEach(matchup => {
+                const selected = matchup.querySelector('.song.selected');
+                if (selected && selected.textContent) {
+                    const albumData = selected.getAttribute('data-album');
+                    finalists.push({ 
+                        name: selected.textContent, 
+                        album: albumData
+                    });
+                }
+            });
+            
+            // Store finals data
+            finalsData.finalist1 = finalists[0] || null;
+            finalsData.finalist2 = finalists[1] || null;
+            
+            document.querySelector('header').style.display = 'none';
+            document.getElementById('finalsScreen').classList.add('active');
+            document.getElementById('container').classList.add('finals');
+            
+            createGlitter();
+            
+            const f1 = document.getElementById('finalist1');
+            const f2 = document.getElementById('finalist2');
+            
+            if (!f1 || !f2) return;
+            
+            if (finalists[0]) {
+                f1.textContent = finalists[0].name;
+                if (finalists[0].album) {
+                    f1.setAttribute('data-album', finalists[0].album);
+                }
+                f1.classList.remove('empty');
+            }
+            
+            if (finalists[1]) {
+                f2.textContent = finalists[1].name;
+                if (finalists[1].album) {
+                    f2.setAttribute('data-album', finalists[1].album);
+                }
+                f2.classList.remove('empty');
+            }
+            
+            f1.onclick = () => selectFinalist(f1, f2);
+            f2.onclick = () => selectFinalist(f2, f1);
+        }
+
+        function selectFinalist(winner, loser) {
+            if (!winner || !loser) return;
+            
+            winner.classList.add('selected');
+            loser.classList.remove('selected');
+            document.getElementById('finalsButton').disabled = false;
+            
+            const winnerText = winner.textContent || '';
+            const loserText = loser.textContent || '';
+            
+            if (winnerText && loserText) {
+                if (!winnerJourney[winnerText]) {
+                    winnerJourney[winnerText] = [];
+                }
+                winnerJourney[winnerText][5] = loserText;
+            }
+        }
+
+        function crownChampion() {
+            const selected = document.querySelector('#finalsScreen .song.selected');
+            if (selected && selected.textContent) {
+                finalsData.winner = selected.textContent;
+                finalsData.winnerAlbum = selected.getAttribute('data-album');
+                totalSelections++;
+                updateProgress();
+                setTimeout(() => showWinnerModal(selected.textContent), 500);
+            }
+        }
+
+        function createBackgroundCircles() {
+            const container = document.querySelector('.background-circles');
+            const sizes = [100, 150, 200, 250, 300, 350];
+            
+            for (let i = 0; i < 15; i++) {
+                const circle = document.createElement('div');
+                circle.className = 'circle';
+                const size = sizes[Math.floor(Math.random() * sizes.length)];
+                circle.style.width = size + 'px';
+                circle.style.height = size + 'px';
+                circle.style.left = Math.random() * 100 + '%';
+                circle.style.top = Math.random() * 100 + '%';
+                circle.style.animationDelay = Math.random() * 10 + 's';
+                circle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                container.appendChild(circle);
+            }
+        }
+
+        function startNewBracket() {
+            clearConfetti();
+            document.querySelectorAll('.glitter').forEach(g => g.remove());
+            document.getElementById('container').classList.remove('finals');
+            document.getElementById('bracketReview').classList.remove('active');
+            document.getElementById('finalsScreen').style.display = '';
+            document.getElementById('roundsContainer').style.display = '';
+            createBracket();
+            window.scrollTo(0, 0);
+        }
+
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('menuDropdown');
+            const hamburger = document.querySelector('.hamburger-menu');
+            if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        initializeSongPool();
+        createBracket();
+        createBackgroundCircles();
+    </script>
+</body>
+</html>
