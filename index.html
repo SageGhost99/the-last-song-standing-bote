@@ -18,6 +18,7 @@
             color: #2d3748;
             position: relative;
             overflow-x: hidden;
+            transition: background 1s ease;
         }
 
         .background-circles {
@@ -277,6 +278,7 @@
             background: linear-gradient(135deg, #1f0f14 0%, #251531 50%, #894b8b 100%);
             padding: 20px 0;
             z-index: 100;
+            transition: background 1s ease;
         }
 
         h1 {
@@ -348,7 +350,7 @@
             z-index: 3000;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s ease, background 0.3s ease;
         }
 
         .round-transition.active {
@@ -607,6 +609,34 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
+        .top-era-stat {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(137, 75, 139, 0.1);
+            border-radius: 12px;
+            border: 2px solid rgba(137, 75, 139, 0.3);
+        }
+        
+        .top-era-stat h3 {
+            font-size: 1.2em;
+            color: #894b8b;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .top-era-stat .era-name {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .top-era-stat .era-count {
+            font-size: 1em;
+            color: #718096;
+            margin-top: 5px;
+        }
+
         .winner-modal-content {
             text-align: center;
         }
@@ -812,6 +842,56 @@
         let totalSelections = 0;
         let roundData = [];
         let finalsData = { finalist1: null, finalist2: null, winner: null, winnerAlbum: null };
+        let eraCount = {
+            "debut": 0, "fearless": 0, "speak-now": 0, "red": 0,
+            "1989": 0, "reputation": 0, "lover": 0, "folklore": 0,
+            "evermore": 0, "midnights": 0, "ttpd": 0, "showgirl": 0
+        };
+        
+        const eraNames = {
+            "debut": "Taylor Swift (Debut)",
+            "fearless": "Fearless",
+            "speak-now": "Speak Now",
+            "red": "Red",
+            "1989": "1989",
+            "reputation": "Reputation",
+            "lover": "Lover",
+            "folklore": "Folklore",
+            "evermore": "Evermore",
+            "midnights": "Midnights",
+            "ttpd": "The Tortured Poets Department",
+            "showgirl": "The Life of a Showgirl"
+        };
+        
+        const eraColors = {
+            "debut": "#3B5d32",
+            "fearless": "#E8C547",
+            "speak-now": "#94417B",
+            "red": "#921d16",
+            "1989": "#7CB4E8",
+            "reputation": "#181818",
+            "lover": "#f1c0db",
+            "folklore": "#979797",
+            "evermore": "#55291e",
+            "midnights": "#4b5a86",
+            "ttpd": "#c7c289",
+            "showgirl": "#e46c32"
+        };
+        
+        const eraGradients = {
+            "debut": "linear-gradient(135deg, #2d4a28 0%, #3B5d32 50%, #4a7041 100%)",
+            "fearless": "linear-gradient(135deg, #c9a03a 0%, #E8C547 50%, #f5d96b 100%)",
+            "speak-now": "linear-gradient(135deg, #6d2f5a 0%, #94417B 50%, #b3529a 100%)",
+            "red": "linear-gradient(135deg, #6b1410 0%, #921d16 50%, #b82419 100%)",
+            "1989": "linear-gradient(135deg, #4a6a9c 0%, #7CB4E8 50%, #a1c9f0 100%)",
+            "reputation": "linear-gradient(135deg, #000000 0%, #181818 50%, #2d2d2d 100%)",
+            "lover": "linear-gradient(135deg, #e8a4c7 0%, #f1c0db 50%, #f7d6e8 100%)",
+            "folklore": "linear-gradient(135deg, #757575 0%, #979797 50%, #b3b3b3 100%)",
+            "evermore": "linear-gradient(135deg, #3d1d14 0%, #55291e 50%, #6d3526 100%)",
+            "midnights": "linear-gradient(135deg, #383f6b 0%, #4b5a86 50%, #5f6fa1 100%)",
+            "ttpd": "linear-gradient(135deg, #a8a66e 0%, #c7c289 50%, #d9d7a4 100%)",
+            "showgirl": "linear-gradient(135deg, #c55425 0%, #e46c32 50%, #f08040 100%)"
+        };
 
         function toggleMenu() {
             const menu = document.getElementById('menuDropdown');
@@ -836,8 +916,41 @@
             document.getElementById('albumKeyModal').classList.add('hidden');
         }
 
+        function getTopEra() {
+            let topEra = null;
+            let maxCount = 0;
+            
+            for (let era in eraCount) {
+                if (eraCount[era] > maxCount) {
+                    maxCount = eraCount[era];
+                    topEra = era;
+                }
+            }
+            
+            return { era: topEra, count: maxCount, name: eraNames[topEra] };
+        }
+
+        function updateBackgroundGradient(era) {
+            if (era && eraGradients[era]) {
+                document.body.style.background = eraGradients[era];
+                const header = document.querySelector('header');
+                if (header) {
+                    header.style.background = eraGradients[era];
+                }
+            }
+        }
+
         function showWinnerModal(winner) {
             createConfetti();
+            
+            // Calculate top era
+            const topEra = getTopEra();
+            
+            // Update background gradient (should already be set, but ensure it's correct)
+            if (topEra.era && topEra.count > 0) {
+                updateBackgroundGradient(topEra.era);
+            }
+            
             document.getElementById('winnerName').textContent = winner;
             
             const journey = winnerJourney[winner] || [];
@@ -846,18 +959,65 @@
             const roundLabels = ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Semi-Finals', 'Finals'];
             journey.forEach((defeated, idx) => {
                 if (defeated) {
-                    journeyHTML += `<div class="journey-round"><strong>${roundLabels[idx]}:</strong> Defeated "${defeated}"</div>`;
+                    const eraColor = topEra.era ? eraColors[topEra.era] : '#894b8b';
+                    journeyHTML += `<div class="journey-round"><strong style="color: ${eraColor};">${roundLabels[idx]}:</strong> Defeated "${defeated}"</div>`;
                 }
             });
             
             journeyHTML += '</div>';
+            
+            // Add top era stat
+            if (topEra.era && topEra.count > 0) {
+                const eraColor = eraColors[topEra.era];
+                journeyHTML += `
+                    <div class="top-era-stat" style="background: ${eraColor}22; border-color: ${eraColor}88;">
+                        <h3 style="color: ${eraColor};">Your Top Era:</h3>
+                        <div class="era-name">${topEra.name}</div>
+                        <div class="era-count">You picked a song from this era ${topEra.count} time${topEra.count !== 1 ? 's' : ''}!</div>
+                    </div>
+                `;
+            }
+            
             document.getElementById('winnerJourney').innerHTML = journeyHTML;
+            
+            // Update modal title color
+            const modal = document.getElementById('winnerModal');
+            const modalTitle = modal.querySelector('h2');
+            if (modalTitle && topEra.era) {
+                modalTitle.style.color = eraColors[topEra.era];
+            }
+            
+            // Update Play Again button color
+            const playAgainBtn = modal.querySelector('.modal-button.secondary');
+            if (playAgainBtn && topEra.era) {
+                playAgainBtn.style.background = eraColors[topEra.era];
+            }
+            
             document.getElementById('winnerModal').classList.remove('hidden');
         }
 
         function closeWinnerModal() {
             document.getElementById('winnerModal').classList.add('hidden');
             clearConfetti();
+            
+            // Restore original gradient for body and header
+            document.body.style.background = 'linear-gradient(135deg, #1f0f14 0%, #251531 50%, #894b8b 100%)';
+            const header = document.querySelector('header');
+            if (header) {
+                header.style.background = 'linear-gradient(135deg, #1f0f14 0%, #251531 50%, #894b8b 100%)';
+            }
+            
+            // Reset modal styling
+            const modal = document.getElementById('winnerModal');
+            const modalTitle = modal.querySelector('h2');
+            if (modalTitle) {
+                modalTitle.style.color = '#894b8b';
+            }
+            const playAgainBtn = modal.querySelector('.modal-button.secondary');
+            if (playAgainBtn) {
+                playAgainBtn.style.background = '#894b8b';
+            }
+            
             startNewBracket();
         }
 
@@ -967,6 +1127,7 @@
         function hideBracketReview() {
             document.getElementById('bracketReview').classList.remove('active');
             document.getElementById('winnerModal').classList.remove('hidden');
+            // Keep the era gradient when returning to winner modal
         }
 
         function createConfetti() {
@@ -1056,6 +1217,12 @@
             currentRound = 0;
             totalSelections = 0;
             roundData = [];
+            
+            // Reset era count
+            for (let era in eraCount) {
+                eraCount[era] = 0;
+            }
+            
             updateProgress();
 
             const songs = selectSongsForBracket();
@@ -1154,15 +1321,37 @@
             const allSongs = matchup.querySelectorAll('.song');
             const wasSelected = song.classList.contains('selected');
             
+            // Track era if selecting a new song
+            const album = song.getAttribute('data-album');
+            
+            // Check if there was a previously selected song to decrement
+            const previouslySelected = matchup.querySelector('.song.selected');
+            if (previouslySelected && previouslySelected !== song) {
+                const prevAlbum = previouslySelected.getAttribute('data-album');
+                if (prevAlbum && eraCount[prevAlbum] > 0) {
+                    eraCount[prevAlbum]--;
+                }
+            }
+            
             allSongs.forEach(s => s.classList.remove('selected'));
             
             if (!wasSelected) {
                 song.classList.add('selected');
                 totalSelections++;
                 updateProgress();
+                
+                // Increment era count
+                if (album && eraCount.hasOwnProperty(album)) {
+                    eraCount[album]++;
+                }
             } else {
                 totalSelections--;
                 updateProgress();
+                
+                // Decrement era count if unselecting
+                if (album && eraCount[album] > 0) {
+                    eraCount[album]--;
+                }
             }
             
             checkRoundCompletion(round);
@@ -1210,11 +1399,22 @@
                 }
             });
             
-            // Show transition animation
+            // Update background gradient based on top era
+            const topEra = getTopEra();
+            if (topEra.era && topEra.count > 0) {
+                updateBackgroundGradient(topEra.era);
+            }
+            
+            // Show transition animation with era color
             const transition = document.getElementById('roundTransition');
             const transitionText = document.getElementById('transitionText');
             
             if (!transition || !transitionText) return;
+            
+            // Set transition background to match top era
+            if (topEra.era && eraGradients[topEra.era]) {
+                transition.style.background = eraGradients[topEra.era];
+            }
             
             if (round < 4) {
                 transitionText.textContent = 'Round Complete!';
@@ -1321,12 +1521,27 @@
         function selectFinalist(winner, loser) {
             if (!winner || !loser) return;
             
+            // Track era changes
+            const previousWinner = document.querySelector('#finalsScreen .song.selected');
+            if (previousWinner && previousWinner !== winner) {
+                const prevAlbum = previousWinner.getAttribute('data-album');
+                if (prevAlbum && eraCount[prevAlbum] > 0) {
+                    eraCount[prevAlbum]--;
+                }
+            }
+            
             winner.classList.add('selected');
             loser.classList.remove('selected');
             document.getElementById('finalsButton').disabled = false;
             
             const winnerText = winner.textContent || '';
             const loserText = loser.textContent || '';
+            const winnerAlbum = winner.getAttribute('data-album');
+            
+            // Increment era count
+            if (winnerAlbum && eraCount.hasOwnProperty(winnerAlbum)) {
+                eraCount[winnerAlbum]++;
+            }
             
             if (winnerText && loserText) {
                 if (!winnerJourney[winnerText]) {
@@ -1372,6 +1587,20 @@
             document.getElementById('bracketReview').classList.remove('active');
             document.getElementById('finalsScreen').style.display = '';
             document.getElementById('roundsContainer').style.display = '';
+            
+            // Restore original gradient for body and header
+            document.body.style.background = 'linear-gradient(135deg, #1f0f14 0%, #251531 50%, #894b8b 100%)';
+            const header = document.querySelector('header');
+            if (header) {
+                header.style.background = 'linear-gradient(135deg, #1f0f14 0%, #251531 50%, #894b8b 100%)';
+            }
+            
+            // Reset transition screen
+            const transition = document.getElementById('roundTransition');
+            if (transition) {
+                transition.style.background = 'linear-gradient(135deg, #1f0f14 0%, #251531 50%, #894b8b 100%)';
+            }
+            
             createBracket();
             window.scrollTo(0, 0);
         }
